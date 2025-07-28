@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+  doris-fe:
+    image: apache/doris:fe-2.1.10.cir-17116
+    container_name: doris-fe
+    ports:
+      - "8030:8030"
+      - "9030:9030"
+    environment:
+      FE_SERVERS: "doris-fe"
+      FE_BROKER: "true"
+    depends_on:
+      - doris-be
+
+  doris-be:
+    image: apache/doris-be-2.1.10.cir-17116
+    container_name: doris-be
+    ports:
+      - "8040:8040"
+      - "9060:9060"
+    environment:
+      BE_SERVERS: "doris-be"
+      FE_SERVERS: "doris-fe"
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-source
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: etldb
+      MYSQL_USER: etluser
+      MYSQL_PASSWORD: etlpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/input/production_logs.sql:/docker-entrypoint-initdb.d/seed.sql
+
+  etl:
+    build:
+      context: .
+      dockerfile: docker/etl/Dockerfile
+    container_name: etl-service
+    depends_on:
+      - mysql
+      - doris-fe
+      - doris-be
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=etluser
+      - MYSQL_PASSWORD=etlpass
+      - MYSQL_DB=etldb
+      - DORIS_HOST=doris-fe
+      - DORIS_PORT=9030
+    volumes:
+      - ./data/input:/app/data/input
+
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    ports:
+      - "3000:3000"
+    depends_on:
+      - doris-fe
+
+volumes:
+  mysql-data:
