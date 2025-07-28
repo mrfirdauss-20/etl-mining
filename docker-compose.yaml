@@ -46,6 +46,7 @@ services:
       timeout: 5s
       retries: 30
       start_period: 60s
+
   mysql:
     image: mysql:8.0
     container_name: mysql-source
@@ -60,9 +61,21 @@ services:
       - ./data/input/production_logs.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       doris-net:
+        ipv4_address: 172.20.0.12
+    
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    ports:
+      - "3000:3000"
     depends_on:
-      be:
+      fe:
         condition: service_healthy
+    networks:
+      doris-net:
+        ipv4_address: 172.20.0.13
+
+
 networks:
   doris-net:
     driver: bridge
