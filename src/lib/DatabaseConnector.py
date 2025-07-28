@@ -11,6 +11,10 @@ class IDatabaseConnector(ABC):
         pass
 
     @abstractmethod
+    def execute_many(self, query: str, data: list):
+        pass
+
+    @abstractmethod
     def close(self):
         pass
 
@@ -40,7 +44,13 @@ class MySQLAdapter(IDatabaseConnector):
         else:
             self.connection.commit()
             return f"Query executed: {query}"
-
+        
+    def execute_many(self, query: str, data: list):
+        if self.cursor is None:
+            raise Exception("Connection is not established. Call connect() first.")
+        self.cursor.executemany(query, data)
+        self.connection.commit()
+        return f"Batch query executed: {query} with {len(data)} records"
     def close(self):
         if self.cursor:
             self.cursor.close()

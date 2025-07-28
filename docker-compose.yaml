@@ -75,7 +75,6 @@ services:
       doris-net:
         ipv4_address: 172.20.0.13
 
-
 networks:
   doris-net:
     driver: bridge
