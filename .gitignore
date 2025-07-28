@@ -1,0 +1,4 @@
+*.tar.gz
+*.csv
+/doris-fe
+/doris-be

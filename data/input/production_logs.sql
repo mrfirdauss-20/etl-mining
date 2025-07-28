@@ -1,5 +1,7 @@
 -- Create database
-CREATE DATABASE IF NOT EXISTS coal_mining;
+CREATE DATABASE IF NOT EXISTS coal_mining
+CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci;
 USE coal_mining;
 
 -- Create mines table

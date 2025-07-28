@@ -1,68 +1,72 @@
-version: '3'
-
 services:
-  doris-fe:
-    image: apache/doris:fe-2.1.10.cir-17116
+  fe:
+    image: apache/doris:fe-3.0.4
     container_name: doris-fe
+    environment:
+      - FE_SERVERS=fe1:172.20.0.10:9010  # Using static IP
+      - FE_ID=1
     ports:
       - "8030:8030"
       - "9030:9030"
-    environment:
-      FE_SERVERS: "doris-fe"
-      FE_BROKER: "true"
-    depends_on:
-      - doris-be
+      - "9010:9010"
+    volumes:
+      - ./doris-fe/doris-meta:/opt/apache-doris/fe/doris-meta
+      - ./doris-fe/conf:/opt/apache-doris/fe/conf
+      - ./doris-fe/log:/opt/apache-doris/fe/log
+    networks:
+      doris-net:
+        ipv4_address: 172.20.0.10  # Must match FE_SERVERS IP
+    command: ["bash", "-c", "cp -n /opt/apache-doris/fe/conf_template/* /opt/apache-doris/fe/conf/ && /opt/apache-doris/fe/bin/start_fe.sh"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8030 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
 
-  doris-be:
-    image: apache/doris-be-2.1.10.cir-17116
+  be:
+    image: apache/doris:be-3.0.4
     container_name: doris-be
+    environment:
+      - FE_SERVERS=fe1:172.20.0.10:9010  # Same IP as FE
+      - BE_ADDR=172.20.0.11:9050
     ports:
       - "8040:8040"
-      - "9060:9060"
-    environment:
-      BE_SERVERS: "doris-be"
-      FE_SERVERS: "doris-fe"
-
+      - "9050:9050"
+    volumes:
+      - ./doris-be/storage:/opt/apache-doris/be/storage
+    networks:
+      doris-net:
+        ipv4_address: 172.20.0.11
+    depends_on:
+      fe:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8040/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
   mysql:
     image: mysql:8.0
     container_name: mysql-source
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: etldb
+      MYSQL_DATABASE: coal_mining
       MYSQL_USER: etluser
       MYSQL_PASSWORD: etlpass
     ports:
       - "3306:3306"
     volumes:
-      - ./docker/input/production_logs.sql:/docker-entrypoint-initdb.d/seed.sql
-
-  etl:
-    build:
-      context: .
-      dockerfile: docker/etl/Dockerfile
-    container_name: etl-service
+      - ./data/input/production_logs.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      doris-net:
     depends_on:
-      - mysql
-      - doris-fe
-      - doris-be
-    environment:
-      - MYSQL_HOST=mysql
-      - MYSQL_PORT=3306
-      - MYSQL_USER=etluser
-      - MYSQL_PASSWORD=etlpass
-      - MYSQL_DB=etldb
-      - DORIS_HOST=doris-fe
-      - DORIS_PORT=9030
-    volumes:
-      - ./data/input:/app/data/input
-
-  metabase:
-    image: metabase/metabase:latest
-    container_name: metabase
-    ports:
-      - "3000:3000"
-    depends_on:
-      - doris-fe
-
-volumes:
-  mysql-data:
+      be:
+        condition: service_healthy
+networks:
+  doris-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+          gateway: 172.20.0.1
