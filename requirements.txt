@@ -1,4 +1,4 @@
 mysql-connector-python
 pandas
-logging
 requests
+dotenv
