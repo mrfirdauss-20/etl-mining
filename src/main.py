@@ -1,4 +1,5 @@
 from lib import DatabaseConnector, ETLPipeline
+from datetime import datetime
 from dotenv import load_dotenv
 import os
 
@@ -25,5 +26,8 @@ doris_raw_adapter.connect()
 mysql_adapter = DatabaseConnector.MySQLAdapter(mysql_config)
 mysql_adapter.connect()
 
-pipeline = ETLPipeline.ETLPipeline(dt="2025-07-28", doris_adapter=doris_raw_adapter, mysql_adapter=mysql_adapter)
+dt_str = datetime.today().strftime("%Y-%m-%d")
+pipeline = ETLPipeline(dt=dt_str, doris_adapter=doris_raw_adapter, mysql_adapter=mysql_adapter)
 pipeline.run()
+
+pipeline.cleanup()

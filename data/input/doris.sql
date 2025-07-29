@@ -57,13 +57,12 @@ PROPERTIES (
 );
 
 -- raw.mines definition
-
 CREATE TABLE `mines` (
   `mine_id` int NOT NULL,
-  `mine_code` varchar(10) NOT NULL,
-  `mine_name` varchar(50) NOT NULL,
-  `location` varchar(100) NOT NULL,
-  `operational_status` varchar(20) NOT NULL
+  `mine_code` varchar(10),
+  `mine_name` varchar(50),
+  `location` varchar(100),
+  `operational_status` varchar(20)
 ) ENGINE=OLAP
 DUPLICATE KEY(`mine_id`)
 COMMENT 'Table of mining sites'
@@ -170,17 +169,16 @@ PROPERTIES (
 );
 
 -- `transform`.production_summary_daily definition
-
-CREATE TABLE `production_summary_daily` (
-  `date` date NOT NULL,
-  `mine_id` varchar(64) NOT NULL,
-  `mine_name` varchar(255) REPLACE NOT NULL,
-  `location` varchar(255) REPLACE NOT NULL,
-  `tons_extracted` bigint SUM NOT NULL,
-  `quality_grade` double REPLACE NOT NULL
+CREATE TABLE transform.production_summary_daily (
+  date date NOT NULL,
+  mine_id varchar(64) NOT NULL,
+  mine_name varchar(255) REPLACE,
+  location varchar(255) REPLACE,
+  tons_extracted bigint SUM NOT NULL,
+  quality_grade double REPLACE
 ) ENGINE=OLAP
-AGGREGATE KEY(`date`, `mine_id`)
-DISTRIBUTED BY HASH(`date`, `mine_id`) BUCKETS 10
+AGGREGATE KEY(date, mine_id)
+DISTRIBUTED BY HASH(date, mine_id) BUCKETS 10
 PROPERTIES (
 "replication_allocation" = "tag.location.default: 1",
 "min_load_replica_num" = "-1",

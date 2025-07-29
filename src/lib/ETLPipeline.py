@@ -15,7 +15,6 @@ class ETLPipeline:
         self._load_production_logs()
         self._transform_to_aggregate()
         self._build_data_mart()
-        self.cleanup()
         logging.info("ETL complete.")
 
     def _load_equipment_data(self):
@@ -70,7 +69,6 @@ class ETLPipeline:
         try:
             json_data = self._fetch_weather_json()
             df = self._transform_weather_json(json_data)
-            print(df)
             self._insert_weather(df)
         except Exception as e:
             logging.error(f"Failed to load weather data: {e}")
@@ -116,8 +114,6 @@ class ETLPipeline:
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
         values = [tuple(row) for row in df.itertuples(index=False, name=None)]
-        print(values)
-        print(stmt)
         self.doris.execute_many(stmt, values)
 
     def _load_production_logs(self):
