@@ -110,7 +110,7 @@ services:
       doris-net:
         ipv4_address: 172.20.0.13
     volumes:
-      - metabase-data:/metabase-data
+      - ./metabase-data:/metabase-data
 
 volumes:
   metabase-data:
