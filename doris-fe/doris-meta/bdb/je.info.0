@@ -334,3 +334,22 @@
 2025-07-29 08:23:15.824 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Joining group as master
 2025-07-29 08:25:06.350 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Start DB remove/truncate scan, id=15 dbId=-274 dbName=16353
 2025-07-29 08:25:06.390 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] End DB remove/truncate scan, id=15 scanned=27 dbId=-274 dbName=16353
+2025-07-29 08:43:55.057 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] No server auth method
+2025-07-29 08:43:55.060 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Started ServiceDispatcher. HostPort=3ce5506f6ca8:9010
+2025-07-29 08:43:55.060 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2025-07-29 08:43:55.116 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] DTVLSN at start:66,826
+2025-07-29 08:43:55.117 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] node:NullNode(-1) state change from DETACHED to UNKNOWN
+2025-07-29 08:43:55.141 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Current group size: 1
+2025-07-29 08:43:55.141 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Existing node fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e querying for a current master.
+2025-07-29 08:43:55.153 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Node fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e started
+2025-07-29 08:43:55.153 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Election initiated; election #1
+2025-07-29 08:43:55.156 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Started election thread Tue Jul 29 08:43:55 UTC 2025
+2025-07-29 08:43:55.161 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Winning proposal: Proposal(00000198555a4195:2c0f96da7813764e0e9d93eadb902b5d:00000001) Value: Value:172.20.0.10$$$9010$$$fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e$$$1
+2025-07-29 08:43:55.162 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Master changed to fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e
+2025-07-29 08:43:55.163 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Election finished. Elapsed time: 10ms
+2025-07-29 08:43:55.163 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Election thread exited. Group master: fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e(1)
+2025-07-29 08:43:55.163 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] node:fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e(1) state change from UNKNOWN to MASTER
+2025-07-29 08:43:55.164 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Feeder manager accepting requests.
+2025-07-29 08:43:55.165 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Joining group as master
+2025-07-29 08:45:02.332 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] Start DB remove/truncate scan, id=16 dbId=-275 dbName=16379
+2025-07-29 08:45:02.425 UTC INFO [fe_07296d98_e32b_4b6b_8ab3_66bab0f6132e] End DB remove/truncate scan, id=16 scanned=9071 dbId=-275 dbName=16379

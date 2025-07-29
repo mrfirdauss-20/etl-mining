@@ -58,7 +58,7 @@ class ETLPipeline:
                         full_records.append(matched.iloc[0].to_dict())
 
         final_df = pd.DataFrame(full_records)
-
+        logging.info(full_records[full_records['status']=='unknown'].__str__())
         cols = final_df.columns.tolist()
         placeholders = ','.join(['%s'] * len(cols))
         insert_stmt = f"INSERT INTO raw.equipment_sensors ({','.join(cols)}) VALUES ({placeholders})"
