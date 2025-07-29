@@ -1,4 +1,3 @@
 *.tar.gz
-*.csv
-/doris-fe
-/doris-be
+src/lib/__pycache__/*
+*/log/*

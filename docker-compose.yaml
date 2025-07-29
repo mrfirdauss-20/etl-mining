@@ -1,9 +1,33 @@
 services:
+  python-app:
+    build:
+      context: .
+      dockerfile: ./src/Dockerfile  
+    container_name: python_app
+    volumes:
+      - ./src:/src
+      - ./data:/data
+    working_dir: /src
+    command: python main.py
+    mem_limit: 512m
+    networks:
+      - doris-net
+    environment:
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    depends_on:
+      fe:
+        condition: service_healthy
+      be:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
   fe:
     image: apache/doris:fe-3.0.4
     container_name: doris-fe
     environment:
-      - FE_SERVERS=fe1:172.20.0.10:9010  # Using static IP
+      - FE_SERVERS=fe1:172.20.0.10:9010  
       - FE_ID=1
     ports:
       - "8030:8030"
@@ -15,7 +39,7 @@ services:
       - ./doris-fe/log:/opt/apache-doris/fe/log
     networks:
       doris-net:
-        ipv4_address: 172.20.0.10  # Must match FE_SERVERS IP
+        ipv4_address: 172.20.0.10  
     command: ["bash", "-c", "cp -n /opt/apache-doris/fe/conf_template/* /opt/apache-doris/fe/conf/ && /opt/apache-doris/fe/bin/start_fe.sh"]
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:8030 || exit 1"]
@@ -27,7 +51,7 @@ services:
     image: apache/doris:be-3.0.4
     container_name: doris-be
     environment:
-      - FE_SERVERS=fe1:172.20.0.10:9010  # Same IP as FE
+      - FE_SERVERS=fe1:172.20.0.10:9010  
       - BE_ADDR=172.20.0.11:9050
     ports:
       - "8040:8040"
@@ -46,7 +70,13 @@ services:
       timeout: 5s
       retries: 30
       start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 12g
+
   mysql:
+    mem_limit: 8g
     image: mysql:8.0
     container_name: mysql-source
     environment:
@@ -60,9 +90,30 @@ services:
       - ./data/input/production_logs.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       doris-net:
+        ipv4_address: 172.20.0.12
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--silent", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    ports:
+      - "3000:3000"
     depends_on:
-      be:
+      fe:
         condition: service_healthy
+    networks:
+      doris-net:
+        ipv4_address: 172.20.0.13
+    volumes:
+      - ./metabase-data:/metabase-data
+
+volumes:
+  metabase-data:
 networks:
   doris-net:
     driver: bridge
